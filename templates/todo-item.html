@@ -10,10 +10,12 @@
         {% endif %}
     </button>
 
-    <p class="flex-auto font-[200]">
-        <span class="{% if todo.completed %}text-green-700 line-through decoration-double{% endif %}">
-            {{ todo.description }}
-        </span>
+    <p class="flex-auto font-[200] break-words w-[24rem]">
+        {% if todo.completed %}
+        <span class="text-green-700 line-through decoration-double">{{ todo.description }}</span>
+        {% else %}
+        <span class="">{{ todo.description }}</span>
+        {% endif %}
     </p>
 
     <button title="Edit Todo" class="flex-none" hx-get="/todo/{{ todo.id }}/edit" hx-target="closest li"
