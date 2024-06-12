@@ -93,6 +93,7 @@ async def mark_all_completed(request: Request, completed: Annotated[bool, Form()
 async def delete_all_completed(request: Request):
     todos[:] = [todo for todo in todos if todo.completed == False]
     context = {"todos": todos, "count": todo_count()}
+    time.sleep(2)
     return templates.TemplateResponse(
         request, "responses/delete-all-completed.html", context
     )
