@@ -1,0 +1,21 @@
+{% if count.total > 0 %}
+<div class="flex justify-between p-4 border-b border-l border-r border-gray-500 text-sm font-[500]">
+    <div class="flex flex-row content-center gap-2">
+        <button class="px-2 py-1 bg-blue-700 text-white rounded-sm" hx-get="/todos" hx-include="#get-total-todos"
+            hx-target="#todo-list" hx-swap="innerHTML">Total:{{count.total }}</button>
+        <button class="px-2 py-1 bg-gray-800 text-white rounded-sm" hx-get="/todos" hx-include="#get-active-todos"
+            hx-target="#todo-list" hx-swap="innerHTML">Active:{{count.active }}</button>
+        <button class="px-2 py-1 bg-green-800 text-white rounded-sm" hx-get="/todos" hx-include="#get-completed-todos"
+            hx-target="#todo-list" hx-swap="innerHTML">Completed:{{ count.completed }}</button>
+    </div>
+    <div class="flex">
+        {% if count.completed > 0 %}
+        <button class="px-2 py-1 bg-red-600 text-white rounded-sm" hx-delete="/todos/completed" hx-target="#todo-list"
+            hx-swap="innerHTML" hx-select-oob="#toggle-complete-all">Delete Completed</button>
+        {% endif %}
+    </div>
+    <input id="get-total-todos" type="hidden" name="count" value="total">
+    <input id="get-active-todos" type="hidden" name="count" value="active">
+    <input id="get-completed-todos" type="hidden" name="count" value="completed">
+</div>
+{% endif %}

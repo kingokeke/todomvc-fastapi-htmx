@@ -1,0 +1,15 @@
+<form hx-patch="/todo/{{ todo.id }}" hx-target="this" hx-swap="outerHTML" hx-select-oob="#toggle-complete-all"
+    class="flex flex-row gap-4 pl-16 pr-8 py-4 border-b border-gray-500 flex-auto bg-gray-100">
+    <input id="edit-todo-input" type="text" class="pl-2 w-full border border-gray-500" name="description"
+        value="{{ todo.description }}" aria-label="Edit todo" autofocus onfocus="this.select()">
+
+    <button title="Update Todo" class="flex-none" hx-patch="/todo/{{ todo.id }}" hx-target="closest form"
+        hx-swap="outerHTML" hx-select-oob="#toggle-complete-all">
+        <i class="bi bi-check-circle text-green-600" aria-hidden="true"></i>
+    </button>
+
+    <button title="Cancel Edit" class="flex-none" hx-put="/todo/{{ todo.id }}/cancel-edit" hx-target="closest form"
+        hx-swap="outerHTML">
+        <i class="bi bi-x-circle text-red-600" aria-hidden="true"></i>
+    </button>
+</form>

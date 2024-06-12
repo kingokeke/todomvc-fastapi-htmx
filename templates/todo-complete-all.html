@@ -1,0 +1,15 @@
+<form id="toggle-complete-all" class="flex flex-row flex-none" hx-put="/todos/completed" hx-target="this"
+    hx-swap="outerHTML" hx-select-oob="#todo-list">
+    {% if todos|length > 0 %}
+    <button class="ml-8 text-gray-400 hover:text-gray-800">
+        {% if count.total == count.completed %}
+        <i aria-hidden="true" class="bi bi-check-circle"></i>
+        {% else %}
+        <i aria-hidden="true" class="bi bi-circle"></i>
+        {% endif %}
+    </button>
+    <input type="hidden" name="completed" value="{{ not count.total == count.completed }}">
+    {% else %}
+    <button disabled class="ml-8 text-gray-200"><i aria-hidden="true" class="bi bi-circle"></i></button>
+    {% endif %}
+</form>

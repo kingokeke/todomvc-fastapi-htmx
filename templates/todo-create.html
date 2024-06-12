@@ -1,0 +1,8 @@
+<div class="flex border border-gray-500">
+  {% include 'todo-complete-all.html' %}
+  <form class="flex flex-row flex-auto" hx-post="/todo" hx-target="#todo-list>ul" hx-swap="beforeend"
+    hx-select-oob="#toggle-complete-all" hx-on--after-request="document.querySelector('#todo-input').value=''">
+    <input type="text" name="description" id="todo-input" class="w-full mx-4 my-4 focus:outline-none"
+      placeholder="What needs to get done?" />
+  </form>
+</div>

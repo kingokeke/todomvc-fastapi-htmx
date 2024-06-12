@@ -1,0 +1,28 @@
+<li class="flex gap-4 px-8 py-4 border-b border-gray-500">
+    <input id="toggle-complete-todo-{{ todo.id }}" type="hidden" name="completed" value="{{ not todo.completed }}">
+    <button title="Mark Completed" class="flex-none text-gray-400 hover:text-gray-800" hx-patch="/todo/{{ todo.id }}"
+        hx-target="closest li" hx-swap="outerHTML" hx-select-oob="#toggle-complete-all"
+        hx-include="#toggle-complete-todo-{{ todo.id }}">
+        {% if todo.completed %}
+        <i aria-hidden="true" class="bi bi-check-circle text-green-700"></i>
+        {% else %}
+        <i aria-hidden="true" class="bi bi-circle"></i>
+        {% endif %}
+    </button>
+
+    <p class="flex-auto font-[200]">
+        <span class="{% if todo.completed %}text-green-700 line-through decoration-double{% endif %}">
+            {{ todo.description }}
+        </span>
+    </p>
+
+    <button title="Edit Todo" class="flex-none" hx-get="/todo/{{ todo.id }}/edit" hx-target="closest li"
+        hx-swap="outerHTML">
+        <i class="bi bi-plus-circle text-gray-400 hover:text-gray-800" aria-hidden="true"></i>
+    </button>
+
+    <button title="Delete Todo" class="flex-none" hx-delete="/todo/{{ todo.id }}" hx-target="closest li"
+        hx-swap="outerHTML" hx-select-oob="#toggle-complete-all">
+        <i class="bi bi-dash-circle text-red-200 hover:text-red-500" aria-hidden="true"></i>
+    </button>
+</li>
