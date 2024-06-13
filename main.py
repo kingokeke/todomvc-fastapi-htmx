@@ -1,4 +1,6 @@
 import time
+import requests
+from requests.exceptions import HTTPError
 from typing import Annotated
 from fastapi import FastAPI, Form, Header, Request
 from fastapi.responses import HTMLResponse
@@ -23,7 +25,7 @@ class Todo(BaseModel):
 
 @app.get("/", response_class=HTMLResponse)
 async def get_index(request: Request):
-    context = {"todos": todos, "count": todo_count()}
+    context = {"todos": todos, "count": todo_count(), "wisdom": get_wisdom_quote()}
     return templates.TemplateResponse(request, "index.html", context)
 
 
@@ -184,6 +186,20 @@ def cancel_edit(
         pass
 
 
+@app.get("/wisdom-quote", response_class=HTMLResponse)
+async def wisdom_quote(
+    request: Request,
+    hx_request: Annotated[bool | None, Header()] = None,
+):
+    if hx_request:
+        # Compose and return HTMX response here
+        context = {"wisdom": get_wisdom_quote()}
+        return templates.TemplateResponse(request, "wisdom-quote.html", context)
+    else:
+        # Compose and return JSON response here
+        pass
+
+
 def todo_count() -> dict[str, int]:
     return {
         "total": len([todo for todo in todos]),
@@ -199,3 +215,17 @@ def filter_todos(filter: str) -> list[Todo]:
         return [todo for todo in todos if todo.completed == True]
     else:
         return todos
+
+
+def get_wisdom_quote():
+    # Demonstrate use case of consuming external API in JSON format
+    try:
+        response = requests.get("https://api.quotable.io/quotes/random")
+        response.raise_for_status()
+        wisdom = response.json()[0]
+        return {"quote": wisdom["content"], "author": wisdom["author"]}
+
+    except HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+    except Exception as err:
+        print(f"Other error occurred: {err}")
