@@ -1,10 +1,10 @@
-{% if count.total > 0 %}
+{% if count.all > 0 %}
 <div class="flex justify-between p-4 border-b border-l border-r border-gray-500 text-sm font-[500]">
     <div class="flex flex-row content-center gap-2">
         <button
             class="px-2 py-1 border-black border hover:bg-blue-700 hover:text-white hover:border-blue-700 rounded-sm"
-            hx-get="/todos" hx-include="#get-total-todos" hx-target="#todo-list" hx-swap="innerHTML">
-            Total:{{count.total}}
+            hx-get="/todos" hx-include="#get-all-todos" hx-target="#todo-list" hx-swap="innerHTML">
+            All:{{count.all}}
         </button>
         <button
             class="px-2 py-1 border-black border hover:bg-gray-800 hover:text-white hover:border-gray-800 rounded-sm"
@@ -26,7 +26,7 @@
         </button>
         {% endif %}
     </div>
-    <input id="get-total-todos" type="hidden" name="count" value="total">
+    <input id="get-all-todos" type="hidden" name="count" value="all">
     <input id="get-active-todos" type="hidden" name="count" value="active">
     <input id="get-completed-todos" type="hidden" name="count" value="completed">
 </div>

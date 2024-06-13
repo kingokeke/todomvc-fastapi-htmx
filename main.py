@@ -202,7 +202,7 @@ async def wisdom_quote(
 
 def todo_count() -> dict[str, int]:
     return {
-        "total": len([todo for todo in todos]),
+        "all": len([todo for todo in todos]),
         "active": len([todo for todo in todos if todo.completed == False]),
         "completed": len([todo for todo in todos if todo.completed == True]),
     }

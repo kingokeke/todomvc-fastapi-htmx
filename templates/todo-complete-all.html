@@ -2,13 +2,13 @@
     hx-swap="outerHTML" hx-select-oob="#todo-list">
     {% if todos|length > 0 %}
     <button class="ml-8 text-gray-400 hover:text-gray-800">
-        {% if count.total == count.completed %}
+        {% if count.all == count.completed %}
         <i aria-hidden="true" class="bi bi-check-circle"></i>
         {% else %}
         <i aria-hidden="true" class="bi bi-circle"></i>
         {% endif %}
     </button>
-    <input type="hidden" name="completed" value="{{ not count.total == count.completed }}">
+    <input type="hidden" name="completed" value="{{ not count.all == count.completed }}">
     {% else %}
     <button disabled class="ml-8 text-gray-200"><i aria-hidden="true" class="bi bi-circle"></i></button>
     {% endif %}
