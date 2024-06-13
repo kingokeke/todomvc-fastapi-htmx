@@ -14,8 +14,7 @@
 <body class="flex justify-center font-thin min-h-screen">
     <div class="flex flex-col content-center justify-center w-[40rem] text-2xl">
         <header class="flex-none my-8">
-            <h1 class="text-9xl text-center lowercase font-[1] cursor-pointer" hx-get="/wisdom-quote"
-                hx-target="#wisdom-quote" hx-trigger="click" hx-swap="outerHTML">Todos</h1>
+            <h1 class="text-9xl text-center lowercase font-[1]">Todos</h1>
         </header>
 
         <main class="flex-auto">
@@ -26,7 +25,7 @@
 
         <footer class="flex-none text-center text-xl py-4">
             <div class="p-4 bg-gray-200 rounded-lg">
-                <p class="underline">Click on the Todos header to load a new quote</p>
+                <p class="underline">Quotable Quotes</p>
                 {% include "wisdom-quote.html" %}
             </div>
             <p class="mt-4">FastAPI + TailwindCSS + HTMX = 🚀🚀🚀</p>

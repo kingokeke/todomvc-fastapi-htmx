@@ -1,3 +1,4 @@
 {% if wisdom.quote and wisdom.author %}
-<p id="wisdom-quote" class="italic mt-8">{{wisdom.quote}} - {{wisdom.author}}</p>
+<p id="wisdom-quote" class="italic mt-8" hx-get="/wisdom-quote" hx-target="this" hx-trigger="every 20s"
+    hx-swap="outerHTML">{{wisdom.quote}} - {{wisdom.author}}</p>
 {% endif %}
