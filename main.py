@@ -14,8 +14,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
-todos = []
-
 
 class Todo(BaseModel):
     id: int
@@ -23,9 +21,17 @@ class Todo(BaseModel):
     completed: bool | None = False
 
 
+state: dict[str, any] = {"todos": [], "current_tab": "all"}
+
+
 @app.get("/", response_class=HTMLResponse)
 async def get_index(request: Request):
-    context = {"todos": todos, "count": todo_count(), "wisdom": get_wisdom_quote()}
+    context = {
+        "todos": filter_todos(state["current_tab"]),
+        "count": todo_count(),
+        "wisdom": get_wisdom_quote(),
+        "current_tab": state["current_tab"],
+    }
     return templates.TemplateResponse(request, "index.html", context)
 
 
@@ -37,7 +43,12 @@ async def get_todos(
 ):
     if hx_request:
         # Compose and return HTMX response here
-        context = {"todos": filter_todos(count), "count": todo_count()}
+        state["current_tab"] = count
+        context = {
+            "todos": filter_todos(state["current_tab"]),
+            "count": todo_count(),
+            "current_tab": state["current_tab"],
+        }
         return templates.TemplateResponse(request, "responses/get-todos.html", context)
     else:
         # Compose and return JSON response here
@@ -51,11 +62,16 @@ async def create_todo(
     hx_request: Annotated[bool | None, Header()] = None,
 ):
     todo = Todo(description=description, id=int(time.time_ns() / 1000))
-    todos.append(todo)
+    state["todos"].append(todo)
 
     if hx_request:
         # Compose and return HTMX response here
-        context = {"todos": todos, "count": todo_count(), "todo": todo}
+        context = {
+            "todos": filter_todos(state["current_tab"]),
+            "count": todo_count(),
+            "todo": todo,
+            "current_tab": state["current_tab"],
+        }
         return templates.TemplateResponse(
             request, "responses/create-todo.html", context
         )
@@ -72,17 +88,22 @@ async def update_todo(
     completed: Annotated[bool | None, Form()] = None,
     hx_request: Annotated[bool | None, Header()] = None,
 ):
-    [index] = [i for (i, item) in enumerate(todos) if item.id == id]
+    [index] = [i for (i, item) in enumerate(state["todos"]) if item.id == id]
 
     if description is not None:
-        todos[index].description = description
+        state["todos"][index].description = description
 
     if completed is not None:
-        todos[index].completed = not todos[index].completed
+        state["todos"][index].completed = not state["todos"][index].completed
 
     if hx_request:
         # Compose and return HTMX response here
-        context = {"todos": todos, "count": todo_count(), "todo": todos[index]}
+        context = {
+            "todos": filter_todos(state["current_tab"]),
+            "count": todo_count(),
+            "todo": state["todos"][index],
+            "current_tab": state["current_tab"],
+        }
         return templates.TemplateResponse(
             request, "responses/update-todo.html", context
         )
@@ -97,12 +118,16 @@ async def delete_todo(
     id: int,
     hx_request: Annotated[bool | None, Header()] = None,
 ):
-    [index] = [i for (i, item) in enumerate(todos) if item.id == id]
-    todos.pop(index)
+    [index] = [i for (i, item) in enumerate(state["todos"]) if item.id == id]
+    state["todos"].pop(index)
 
     if hx_request:
         # Compose and return HTMX response here
-        context = {"todos": todos, "count": todo_count()}
+        context = {
+            "todos": filter_todos(state["current_tab"]),
+            "count": todo_count(),
+            "current_tab": state["current_tab"],
+        }
         return templates.TemplateResponse(
             request, "responses/delete-todo.html", context
         )
@@ -117,11 +142,16 @@ async def edit_todo(
     id: int,
     hx_request: Annotated[bool | None, Header()] = None,
 ):
-    [index] = [i for (i, item) in enumerate(todos) if item.id == id]
+    [index] = [i for (i, item) in enumerate(state["todos"]) if item.id == id]
 
     if hx_request:
         # Compose and return HTMX response here
-        context = {"todos": todos, "count": todo_count(), "todo": todos[index]}
+        context = {
+            "todos": filter_todos(state["current_tab"]),
+            "count": todo_count(),
+            "todo": state["todos"][index],
+            "current_tab": state["current_tab"],
+        }
         return templates.TemplateResponse(request, "responses/edit-todo.html", context)
     else:
         # Compose and return JSON response here
@@ -134,12 +164,16 @@ async def mark_all_completed(
     completed: Annotated[bool, Form()],
     hx_request: Annotated[bool | None, Header()] = None,
 ):
-    for todo in todos:
+    for todo in state["todos"]:
         todo.completed = completed
 
     if hx_request:
         # Compose and return HTMX response here
-        context = {"todos": todos, "count": todo_count()}
+        context = {
+            "todos": filter_todos(state["current_tab"]),
+            "count": todo_count(),
+            "current_tab": state["current_tab"],
+        }
         return templates.TemplateResponse(
             request, "responses/mark-all-completed.html", context
         )
@@ -153,12 +187,19 @@ async def delete_all_completed(
     request: Request,
     hx_request: Annotated[bool | None, Header()] = None,
 ):
-    todos[:] = [todo for todo in todos if todo.completed == False]
+    state["todos"][:] = [todo for todo in state["todos"] if todo.completed == False]
+
+    if todo_count()["all"] == 0:
+        state["current_tab"] = "all"
 
     if hx_request:
         # Compose and return HTMX response here
         time.sleep(2)  # Simulate slow network to illustrate HTMX indicator
-        context = {"todos": todos, "count": todo_count()}
+        context = {
+            "todos": filter_todos(state["current_tab"]),
+            "count": todo_count(),
+            "current_tab": state["current_tab"],
+        }
         return templates.TemplateResponse(
             request, "responses/delete-all-completed.html", context
         )
@@ -173,11 +214,16 @@ def cancel_edit(
     id: int,
     hx_request: Annotated[bool | None, Header()] = None,
 ):
-    [index] = [i for (i, item) in enumerate(todos) if item.id == id]
+    [index] = [i for (i, item) in enumerate(state["todos"]) if item.id == id]
 
     if hx_request:
         # Compose and return HTMX response here
-        context = {"todos": todos, "todo": todos[index], "count": todo_count()}
+        context = {
+            "todos": filter_todos(state["current_tab"]),
+            "todo": state["todos"][index],
+            "count": todo_count(),
+            "current_tab": state["current_tab"],
+        }
         return templates.TemplateResponse(
             request, "responses/cancel-edit.html", context
         )
@@ -202,19 +248,19 @@ async def wisdom_quote(
 
 def todo_count() -> dict[str, int]:
     return {
-        "all": len([todo for todo in todos]),
-        "active": len([todo for todo in todos if todo.completed == False]),
-        "completed": len([todo for todo in todos if todo.completed == True]),
+        "all": len([todo for todo in state["todos"]]),
+        "active": len([todo for todo in state["todos"] if todo.completed == False]),
+        "completed": len([todo for todo in state["todos"] if todo.completed == True]),
     }
 
 
 def filter_todos(filter: str) -> list[Todo]:
     if filter == "active":
-        return [todo for todo in todos if todo.completed == False]
+        return [todo for todo in state["todos"] if todo.completed == False]
     elif filter == "completed":
-        return [todo for todo in todos if todo.completed == True]
+        return [todo for todo in state["todos"] if todo.completed == True]
     else:
-        return todos
+        return state["todos"]
 
 
 def get_wisdom_quote():

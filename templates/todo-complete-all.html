@@ -1,6 +1,6 @@
 <form id="toggle-complete-all" class="flex flex-row flex-none" hx-put="/todos/completed" hx-target="this"
     hx-swap="outerHTML" hx-select-oob="#todo-list">
-    {% if todos|length > 0 %}
+    {% if count.all > 0 %}
     <button class="ml-8 text-gray-400 hover:text-gray-800">
         {% if count.all == count.completed %}
         <i aria-hidden="true" class="bi bi-check-circle"></i>
