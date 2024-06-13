@@ -2,17 +2,17 @@
 <div class="flex justify-between p-4 border-b border-l border-r border-gray-500 text-sm font-[500]">
     <div class="flex flex-row content-center gap-2">
         <button
-            class="px-2 py-1 border-black border {% if current_tab == 'all' %}bg-blue-700 text-white border-blue-700{% endif %} hover:bg-blue-700 hover:text-white hover:border-blue-700 rounded-sm"
+            class="px-2 py-1 border-black border {% if current_tab == 'all' %}bg-gray-700 text-white border-gray-800{% else %}hover:bg-gray-700 hover:text-white hover:border-gray-800{% endif %} rounded-sm"
             hx-get="/todos" hx-include="#get-all-todos" hx-target="#todo-list" hx-swap="innerHTML">
             All:{{count.all}}
         </button>
         <button
-            class="px-2 py-1 border-black border {% if current_tab == 'active' %}bg-gray-800 text-white border-gray-800{% endif %} hover:bg-gray-800 hover:text-white hover:border-gray-800 rounded-sm"
+            class="px-2 py-1 border-black border {% if current_tab == 'active' %}bg-gray-700 text-white border-gray-800{% else %}hover:bg-gray-700 hover:text-white hover:border-gray-800{% endif %} rounded-sm"
             hx-get="/todos" hx-include="#get-active-todos" hx-target="#todo-list" hx-swap="innerHTML">
             Active:{{count.active }}
         </button>
         <button
-            class="px-2 py-1 border-black border {% if current_tab == 'completed' %}bg-green-800 text-white border-green-800{% endif %} hover:bg-green-800 hover:text-white hover:border-green-800 rounded-sm"
+            class="px-2 py-1 border-black border {% if current_tab == 'completed' %}bg-gray-700 text-white border-gray-800{% else %}hover:bg-gray-700 hover:text-white hover:border-gray-800{% endif %} rounded-sm"
             hx-get="/todos" hx-include="#get-completed-todos" hx-target="#todo-list" hx-swap="innerHTML">
             Completed:{{count.completed}}
         </button>
