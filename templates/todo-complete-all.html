@@ -5,7 +5,8 @@
         {% if count.all == count.completed %}
         <i aria-hidden="true" class="bi bi-check-circle"></i>
         {% else %}
-        <i aria-hidden="true" class="bi bi-circle"></i>
+        <i aria-hidden="true" class="bi bi-circle"
+            data-script="on mouseenter add .bi-check-circle-fill remove .bi-circle on me on mouseleave add .bi-circle remove .bi-check-circle-fill on me"></i>
         {% endif %}
     </button>
     <input type="hidden" name="completed" value="{{ not count.all == count.completed }}">
